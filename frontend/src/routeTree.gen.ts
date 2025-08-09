@@ -9,38 +9,92 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HomeIndexRouteImport } from './routes/home/index'
+import { Route as HomeTransactionsRouteImport } from './routes/home/transactions'
+import { Route as HomeInformationsRouteImport } from './routes/home/informations'
 
+const HomeRouteRoute = HomeRouteRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeIndexRoute = HomeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeTransactionsRoute = HomeTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeInformationsRoute = HomeInformationsRouteImport.update({
+  id: '/informations',
+  path: '/informations',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/home': typeof HomeRouteRouteWithChildren
+  '/home/informations': typeof HomeInformationsRoute
+  '/home/transactions': typeof HomeTransactionsRoute
+  '/home/': typeof HomeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/home/informations': typeof HomeInformationsRoute
+  '/home/transactions': typeof HomeTransactionsRoute
+  '/home': typeof HomeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/home': typeof HomeRouteRouteWithChildren
+  '/home/informations': typeof HomeInformationsRoute
+  '/home/transactions': typeof HomeTransactionsRoute
+  '/home/': typeof HomeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/home/informations'
+    | '/home/transactions'
+    | '/home/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/home/informations' | '/home/transactions' | '/home'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/home/informations'
+    | '/home/transactions'
+    | '/home/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HomeRouteRoute: typeof HomeRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +102,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home/': {
+      id: '/home/'
+      path: '/'
+      fullPath: '/home/'
+      preLoaderRoute: typeof HomeIndexRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/transactions': {
+      id: '/home/transactions'
+      path: '/transactions'
+      fullPath: '/home/transactions'
+      preLoaderRoute: typeof HomeTransactionsRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/informations': {
+      id: '/home/informations'
+      path: '/informations'
+      fullPath: '/home/informations'
+      preLoaderRoute: typeof HomeInformationsRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
   }
 }
 
+interface HomeRouteRouteChildren {
+  HomeInformationsRoute: typeof HomeInformationsRoute
+  HomeTransactionsRoute: typeof HomeTransactionsRoute
+  HomeIndexRoute: typeof HomeIndexRoute
+}
+
+const HomeRouteRouteChildren: HomeRouteRouteChildren = {
+  HomeInformationsRoute: HomeInformationsRoute,
+  HomeTransactionsRoute: HomeTransactionsRoute,
+  HomeIndexRoute: HomeIndexRoute,
+}
+
+const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
+  HomeRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HomeRouteRoute: HomeRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,12 +21,27 @@ function App() {
   const { control } = form
 
   return (
-    <main className="h-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
+    <main className="min-h-screen px-2 overflow-hidden">
+      <div className="w-full max-w-md bg-white/80 rounded-lg p-6 sm:p-8 mx-auto text-center mt-24 mb-8">
         <h4 className="font-bold text-2xl">Economize com o FinanFácil 💸</h4>
-        <span>Insira suas credenciais para entrar na sua conta</span>
+        <span className="block mt-4 mb-8">
+          Insira suas credenciais para entrar na sua conta
+        </span>
         <Form {...form}>
-          <form className="w-full flex flex-col gap-4" action="">
+          <form className="w-full space-y-4" action="">
+            <FormField
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="@seunome" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={control}
               name="email"
@@ -59,7 +73,7 @@ function App() {
               )}
             />
             <Button
-              className="bg-green-600 hover:bg-green-900 cursor-pointer"
+              className="bg-green-600 hover:bg-green-900 cursor-pointer w-full"
               type="submit"
             >
               Entrar

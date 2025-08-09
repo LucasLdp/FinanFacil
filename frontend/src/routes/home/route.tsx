@@ -17,8 +17,8 @@ function RouteComponent() {
 
   return (
     <>
-      <nav className="flex w-full justify-between px-22 py-8 mb-4 border-border">
-        <ul className="flex gap-2">
+      <nav className="flex flex-col md:flex-row w-full justify-between items-center gap-4 px-4 sm:px-8 py-4 md:py-8 mb-4 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-10">
+        <ul className="flex flex-wrap gap-2">
           {tabs.map((tab) => {
             let isActive = false
             if (tab.to === '/home') {
@@ -32,9 +32,9 @@ function RouteComponent() {
                 <Link
                   to={tab.to}
                   className={
-                    `px-4 py-2 font-medium ` +
+                    `px-3 py-2 font-medium rounded-md transition-colors ` +
                     (isActive
-                      ? 'text-green-700 border-b-2 border-green-600 font-semibold'
+                      ? 'text-green-700 border-b-2 border-green-600 font-semibold bg-green-50'
                       : 'text-muted-foreground hover:bg-muted')
                   }
                   preload="intent"
@@ -46,10 +46,12 @@ function RouteComponent() {
           })}
         </ul>
         {location.pathname === '/home' && (
-          <span className="text-xl">Olá, Lucas</span>
+          <span className="text-lg md:text-xl whitespace-nowrap">
+            Olá, Lucas
+          </span>
         )}
       </nav>
-      <main className="px-22">
+      <main className="px-2 sm:px-4 md:px-8 w-full max-w-7xl mx-auto">
         <Outlet />
       </main>
     </>

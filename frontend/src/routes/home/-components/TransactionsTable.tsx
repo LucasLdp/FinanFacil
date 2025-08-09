@@ -51,14 +51,19 @@ export function TransactionsTable<TData, TValue>({
   return (
     <div className="overflow-hidden rounded-md">
       <div className="flex gap-2 mb-4">
-        <Input
-          placeholder="Pesquise..."
-          value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="w-1/3"
-        />
-        <Button variant="secondary">
-          <Search className="w-4 h-4" />
+        <form className="w-full flex gap-4" action="">
+          <Input
+            placeholder="Pesquise..."
+            value={globalFilter ?? ''}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="w-1/3"
+          />
+          <Button variant="secondary">
+            <Search className="w-4 h-4" />
+          </Button>
+        </form>
+        <Button className="bg-green-600 font-bold hover:bg-green-400 cursor-pointer">
+          Adicionar
         </Button>
       </div>
 

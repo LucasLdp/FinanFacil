@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as HomeTransactionsRouteImport } from './routes/home/transactions'
 import { Route as HomeInformationsRouteImport } from './routes/home/informations'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRouteRoute = HomeRouteRouteImport.update({
   id: '/home',
   path: '/home',
@@ -44,12 +50,14 @@ const HomeInformationsRoute = HomeInformationsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRouteRouteWithChildren
+  '/register': typeof RegisterRoute
   '/home/informations': typeof HomeInformationsRoute
   '/home/transactions': typeof HomeTransactionsRoute
   '/home/': typeof HomeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/register': typeof RegisterRoute
   '/home/informations': typeof HomeInformationsRoute
   '/home/transactions': typeof HomeTransactionsRoute
   '/home': typeof HomeIndexRoute
@@ -58,6 +66,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home': typeof HomeRouteRouteWithChildren
+  '/register': typeof RegisterRoute
   '/home/informations': typeof HomeInformationsRoute
   '/home/transactions': typeof HomeTransactionsRoute
   '/home/': typeof HomeIndexRoute
@@ -67,15 +76,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/home'
+    | '/register'
     | '/home/informations'
     | '/home/transactions'
     | '/home/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home/informations' | '/home/transactions' | '/home'
+  to: '/' | '/register' | '/home/informations' | '/home/transactions' | '/home'
   id:
     | '__root__'
     | '/'
     | '/home'
+    | '/register'
     | '/home/informations'
     | '/home/transactions'
     | '/home/'
@@ -84,10 +95,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRouteRoute: typeof HomeRouteRouteWithChildren
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -145,6 +164,7 @@ const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRouteRoute: HomeRouteRouteWithChildren,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,8 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { useAuth } from '@/context/AuthContext'
+import { Button } from '@/components/ui/button'
+import { useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/home')({
   component: RouteComponent,
@@ -14,10 +18,17 @@ const tabs = [
 
 function RouteComponent() {
   const { location } = useRouterState()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate({ to: '/' })
+  }
 
   return (
-    <>
-      <nav className="flex flex-col md:flex-row w-full justify-between items-center gap-4 px-4 sm:px-8 py-4 md:py-8 mb-4 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-10">
+    <ProtectedRoute>
+      <nav className="flex flex-col md:flex-row w-full justify-between items-center gap-4 px-4 sm:px-28 py-4 md:py-8 mb-4 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-10">
         <ul className="flex flex-wrap gap-2">
           {tabs.map((tab) => {
             let isActive = false
@@ -46,14 +57,24 @@ function RouteComponent() {
           })}
         </ul>
         {location.pathname === '/home' && (
-          <span className="text-lg md:text-xl whitespace-nowrap">
-            Olá, Lucas
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-lg md:text-xl whitespace-nowrap">
+              Olá, {user?.name || 'Usuário'}
+            </span>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              className="text-red-600 border-red-600 hover:bg-red-50"
+            >
+              Sair
+            </Button>
+          </div>
         )}
       </nav>
       <main className="px-2 sm:px-4 md:px-8 w-full max-w-7xl mx-auto">
         <Outlet />
       </main>
-    </>
+    </ProtectedRoute>
   )
 }

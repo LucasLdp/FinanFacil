@@ -9,41 +9,32 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
-import { LoginUserSchema } from '@/schemas/user.schema'
-import { useAuth } from '@/context/AuthContext'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import type { z } from 'zod'
+import { CreateUserSchema, type ICreateUserDTO } from '@/schemas/user.schema'
 
-type LoginFormData = z.infer<typeof LoginUserSchema>
+import { useCreateUser } from '@/hooks/users/useCreateUser'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/register')({
   component: App,
 })
 
 function App() {
-  const { login, isLoading } = useAuth()
-  const navigate = useNavigate()
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(LoginUserSchema),
+  const createUser = useCreateUser()
+  const form = useForm({
+    resolver: zodResolver(CreateUserSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   })
   const { control } = form
 
-  async function onSubmit(data: LoginFormData) {
-    try {
-      await login(data)
-      toast.success('Login realizado com sucesso!')
-      navigate({ to: '/home' })
-    } catch (error) {
-      toast.error('Erro ao fazer login. Verifique suas credenciais.')
-      console.error('Erro no login:', error)
-    }
+  async function onSubmit(data: ICreateUserDTO) {
+    await createUser.mutateAsync(data)
   }
 
   return (
@@ -58,6 +49,19 @@ function App() {
             className="w-full space-y-4"
             onSubmit={form.handleSubmit(onSubmit)}
           >
+            <FormField
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="Seu nome" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-left" />
+                </FormItem>
+              )}
+            />
             <FormField
               control={control}
               name="email"
@@ -90,18 +94,14 @@ function App() {
             />
             <Button
               type="submit"
-              disabled={isLoading}
-              className="bg-green-600 hover:bg-green-900 cursor-pointer w-full disabled:opacity-50"
+              className="bg-green-600 hover:bg-green-900 cursor-pointer w-full"
             >
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              Entrar
             </Button>
             <span className="flex gap-2 justify-center">
-              Não possui uma conta?
-              <Link
-                className="text-green-600 hover:text-green-900"
-                to="/register"
-              >
-                Crie uma agora
+              Já possui uma conta?
+              <Link className="text-green-600 hover:text-green-900" to="/">
+                Entre agora !
               </Link>
             </span>
           </form>
